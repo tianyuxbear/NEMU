@@ -15,6 +15,8 @@
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
 
+#include "checkpoint/cpt_env.h"
+#include "utils.h"
 #include <cpu/cpu.h>
 #include <cpu/exec.h>
 #include <cpu/difftest.h>
@@ -104,7 +106,9 @@ void monitor_statistic() {
 #else
   Log("CONFIG_ENABLE_INSTR_CNT is not defined");
 #endif
-  dump_ckpt_info();
+  if (checkpoint_state != NoCheckpoint) {
+    dump_ckpt_info();
+  }
 }
 
 static word_t g_ex_cause = 0;
@@ -628,6 +632,7 @@ void cpu_exec(uint64_t n) {
          n_remain_total);
   }
 
+  interval_start = get_time();
   while (nemu_state.state == NEMU_RUNNING &&
          MUXDEF(CONFIG_ENABLE_INSTR_CNT, n_remain_total > 0, true)) {
 #ifdef CONFIG_DEVICE

@@ -38,14 +38,17 @@
  *          Curtis Dunham
  */
 
+#include "base/output.h"
 #include "checkpoint/path_manager.h"
 #include <cassert>
 // #include <debug.h>
 #include <algorithm>
+#include <ctime>
 #include <iostream>
 #include <vector>
 
 #include <checkpoint/simpoint.h>
+#include <checkpoint/cpt_env.h>
 #include <profiling/profiling_control.h>
 
 namespace SimPointNS
@@ -59,12 +62,14 @@ extern char *log_filebuf;
 extern uint64_t record_row_number;
 extern FILE *log_fp;
 extern bool enable_small_log;
+extern uint64_t get_time();
 }
 
 SimPoint::SimPoint()
     : intervalCount(0),
       intervalDrift(0),
       simpointStream(nullptr),
+      intervalTimeStream(nullptr),
       currentBBV(0, 0),
       currentBBVInstCount(0) {
 }
@@ -72,6 +77,9 @@ SimPoint::SimPoint()
 SimPoint::~SimPoint() {
   if (simpointStream)
     NEMUNS::simout.close(simpointStream);
+
+  if (intervalTimeStream) 
+    NEMUNS::simout.close(intervalTimeStream);
 }
 
 void
@@ -82,12 +90,17 @@ SimPoint::init() {
     intervalSize = checkpoint_interval;
     Log("Doing simpoint profiling with interval %lu", intervalSize);
     auto path = pathManager.getOutputPath() + "/simpoint_bbv.gz";
+    auto tpath = pathManager.getOutputPath() + "/interval_time.txt";
 
     using NEMUNS::simout;
     simpointStream = simout.create(path, false);
+    intervalTimeStream = simout.create(tpath, false, true);
 
     if (!simpointStream)
       xpanic("unable to open SimPoint profile_file %s\n", path.c_str());
+
+     if (!intervalTimeStream)
+      xpanic("unable to open interval execute time record file %s\n", path.c_str());
   }
 }
 
@@ -142,6 +155,10 @@ SimPoint::profile(Addr pc, bool is_control, bool is_last_uop, unsigned instr_cou
     // (intervalCount) and the excessive inst count from the previous
     // interval (intervalDrift) is greater than/equal to the interval size.
     if (intervalCount + intervalDrift >= intervalSize) {
+      interval_end = get_time();
+      interval_time = interval_end - interval_start;
+      *intervalTimeStream->stream() << interval_time << std::endl;
+
       // summarize interval and display BBV info
       std::vector<std::pair<uint64_t, uint64_t> > counts;
       for (auto map_itr = bbMap.begin(); map_itr != bbMap.end(); ++map_itr) {
@@ -163,6 +180,8 @@ SimPoint::profile(Addr pc, bool is_control, bool is_last_uop, unsigned instr_cou
 
       intervalDrift = (intervalCount + intervalDrift) - intervalSize;
       intervalCount = 0;
+
+      interval_start = get_time();
     }
   }
 }

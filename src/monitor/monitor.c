@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <time.h>
 #include <unistd.h>
 
 #ifndef CONFIG_SHARE
@@ -54,10 +53,6 @@ extern char *mem_dump_file;
 extern char *memory_region_record_file;
 #endif
 int is_batch_mode() { return batch_mode; }
-
-// measure the time taken for the load process
-clock_t load_start, load_end;
-double load_time;
 
 static inline void welcome() {
   Log("Debug: \33[1;32m%s\33[0m", MUXDEF(CONFIG_DEBUG, "ON","OFF"));
@@ -347,7 +342,7 @@ void init_monitor(int argc, char *argv[]) {
     img_size = MEMORY_SIZE;
     bbl_start = MEMORY_SIZE; // bbl size should never be used, let it crash if used
 
-    load_start = clock();
+    start = clock();
     if (map_image_as_output_cpt) {  // map_cpt is loaded in init_mem
       Log("Restoring with memory image cpt");
     } else {
@@ -356,9 +351,9 @@ void init_monitor(int argc, char *argv[]) {
     if (restorer) {
       load_img(restorer, "Gcpt restorer form cmdline", RESET_VECTOR, 0xf00);
     }
-    load_end = clock();
-    load_time = (double)(load_end - load_start) / CLOCKS_PER_SEC;
-    printf("Time consumed during the load process ==> %.6fs\n", load_time);
+    end = clock();
+    time_cost = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Time consumed during the load process ==> %.6fs\n", time_cost);
 
   } else if (checkpoint_state != NoCheckpoint) {
     // boot: jump to restorer --> restorer jump to bbl

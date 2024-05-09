@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include <cstdint>
 #include <ctime>
 #include <stddef.h>
 #include <stdio.h>
@@ -36,6 +37,8 @@ size_t total_gz_size, total_raw_size, total_raw_gz_size;
 
 clock_t start, end;
 double time_cost;
+
+uint64_t interval_start, interval_end, interval_time;
 
 struct stat file_stat;
 

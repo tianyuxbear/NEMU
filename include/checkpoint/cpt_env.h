@@ -46,6 +46,8 @@ extern size_t total_gz_size, total_raw_size, total_raw_gz_size;
 extern clock_t start, end;
 extern double time_cost;
 
+extern uint64_t interval_start, interval_end, interval_time;
+
 extern struct stat file_stat;
 
 extern size_t ckpt_num;

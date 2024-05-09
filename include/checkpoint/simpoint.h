@@ -104,6 +104,8 @@ class SimPoint
     uint64_t intervalDrift;
     /** Pointer to SimPoint BBV output stream */
     NEMUNS::OutputStream *simpointStream;
+    /** Pointer to interval execute time log stream*/
+    NEMUNS::OutputStream *intervalTimeStream;
 
     /** Basic Block information */
     struct BBInfo
