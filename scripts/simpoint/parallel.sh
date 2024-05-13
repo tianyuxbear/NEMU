@@ -92,7 +92,7 @@ export -f restore
 run(){
     set -x
     workload=$1
-    log=$LOG_PATH/run_logs/${workload}/on-w
+    log=$LOG_PATH/run_logs/${workload}/on
     mkdir -p $log
 
     $NEMU ${WORKLOAD_ROOT_PATH}/${workload}-bbl-linux-spec.bin \
@@ -101,8 +101,8 @@ run(){
 export -f run
 
 
-export workload_list=$NEMU_HOME/scripts/simpoint/test_workload_list.txt
-export checkpoint_list=$NEMU_HOME/scripts/simpoint/test_checkpoint_list.txt
+export workload_list=$NEMU_HOME/scripts/simpoint/workload_list.txt
+export checkpoint_list=$NEMU_HOME/scripts/simpoint/checkpoint_list.txt
 
 parallel_profiling(){
 	export num_threads=20
@@ -134,7 +134,7 @@ parallel_run(){
 }
 export -f parallel_run
 
-parallel_profiling
+# parallel_profiling
 
 # parallel_cluster
 
