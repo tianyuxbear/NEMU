@@ -54,4 +54,8 @@ extern size_t ckpt_num;
 
 #define INDEX(addr) ((addr - 0x100000000) / 0x1000)
 
+
+#define MEM_START 0x100000000
+#define MEM_END 0x300000000
+
 #endif
