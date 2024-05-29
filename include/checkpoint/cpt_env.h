@@ -40,8 +40,8 @@ typedef struct{
 extern seg segs[0x100000];
 extern size_t seg_num;
 
-extern double dump_gz_time, dump_raw_time, dump_raw_gz_time;
-extern size_t total_gz_size, total_raw_size, total_raw_gz_size;
+extern double dump_gz_time, dump_raw_time, dump_raw_gz_time, dump_zstd_time;
+extern size_t total_gz_size, total_raw_size, total_raw_gz_size, total_zstd_size;
 
 extern clock_t start, end;
 extern double time_cost;

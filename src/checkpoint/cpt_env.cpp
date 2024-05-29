@@ -32,8 +32,8 @@ unsigned char page_vec[0x200000];
 seg segs[0x100000];
 size_t seg_num;
 
-double dump_gz_time, dump_raw_time, dump_raw_gz_time;
-size_t total_gz_size, total_raw_size, total_raw_gz_size;
+double dump_gz_time, dump_raw_time, dump_raw_gz_time, dump_zstd_time;
+size_t total_gz_size, total_raw_size, total_raw_gz_size, total_zstd_size;
 
 clock_t start, end;
 double time_cost;
@@ -92,6 +92,12 @@ void dump_ckpt_info()
 	printf("Generate %lu checkpoint files\n", ckpt_num);
 	printf("total dump time: %fs     average dump time: %fs\n", dump_raw_gz_time, dump_raw_gz_time / ckpt_num);
 	size  = (double)total_raw_gz_size / 0x100000;
+	printf("total ckpt size：%fMB   average ckpt size: %fMB\n", size, size / ckpt_num );
+
+	printf("==========   zstd   ==========\n");
+	printf("Generate %lu checkpoint files\n", ckpt_num);
+	printf("total dump time: %fs     average dump time: %fs\n", dump_zstd_time, dump_zstd_time / ckpt_num);
+	size = (double)total_zstd_size / 0x100000;
 	printf("total ckpt size：%fMB   average ckpt size: %fMB\n", size, size / ckpt_num );
 }
 

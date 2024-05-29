@@ -134,6 +134,8 @@ void Serializer::serializePMem(uint64_t inst_count) {
     }
   } else if (compress_file_format == ZSTD_FORMAT) {
     filepath += "_.zstd";
+
+    start = clock();
     // zstd compress
     size_t const compress_buffer_size = ZSTD_compressBound(PMEM_SIZE);
     void *const compress_buffer = malloc(compress_buffer_size);
@@ -144,6 +146,11 @@ void Serializer::serializePMem(uint64_t inst_count) {
 
     FILE *compress_file = fopen(filepath.c_str(), "wb");
     size_t fw_size = fwrite(compress_buffer, 1, compress_size, compress_file);
+
+    end = clock();
+    time_cost = (double)(end - start) / CLOCKS_PER_SEC;
+    dump_zstd_time += time_cost;
+    total_zstd_size += fw_size;
 
     if (fw_size != (size_t)compress_size) {
       free(compress_buffer);

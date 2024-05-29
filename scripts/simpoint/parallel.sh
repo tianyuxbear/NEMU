@@ -61,12 +61,12 @@ checkpoint(){
     workload=$1
 
     export CLUSTER=$RESULT/cluster/
-    log=$LOG_PATH/checkpoint_logs/${workload}/raw
+    log=$LOG_PATH/checkpoint_logs/${workload}/zstd
     mkdir -p $log
     $NEMU ${WORKLOAD_ROOT_PATH}/${workload}-bbl-linux-spec.bin  \
          -D $RESULT -w ${workload} -C checkpoint   \
          -b -S $CLUSTER --cpt-interval $interval \
-         --checkpoint-format raw \
+         --checkpoint-format zstd \
          -r $GCPT > $log/${workload}-out.txt 2>$log/${workload}-err.txt 
 }
 export -f checkpoint
@@ -80,7 +80,7 @@ restore(){
     workload=${args[0]}
     ckpt=${args[1]}
 
-    log=$LOG_PATH/restore_logs/${workload}/raw
+    log=$LOG_PATH/restore_logs/${workload}/zstd
     mkdir -p $log
     $NEMU --restore ${NEMU_HOME}/${ckpt} \
           -b  -I ${interval} \
@@ -102,7 +102,7 @@ export -f run
 
 
 export workload_list=$NEMU_HOME/scripts/simpoint/workload_list.txt
-export checkpoint_list=$NEMU_HOME/scripts/simpoint/checkpoint_list.txt
+export checkpoint_list=$NEMU_HOME/scripts/simpoint/test_checkpoint_list.txt
 
 parallel_profiling(){
 	export num_threads=20
