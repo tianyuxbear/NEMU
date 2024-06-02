@@ -49,6 +49,9 @@ cluster(){
     $SIMPOINT \
         -loadFVFile $PROFILING_RES/${workload}/simpoint_bbv.gz \
         -saveSimpoints $CLUSTER/simpoints0 -saveSimpointWeights $CLUSTER/weights0 \
+        -savePreprocessData ${CLUSTER}/reduced_dimensional_data.txt \
+        -saveFinalCtrs ${CLUSTER}/cluster_center_data.txt \
+        -saveLabels ${CLUSTER}/labels.txt \
         -inputVectorsGzipped -maxK 30 -numInitSeeds 2 -iters 1000 -seedkm ${random1} -seedproj ${random2} \
         > $log/${workload}-out.txt 2> $log/${workload}-err.txt
 }
@@ -101,7 +104,7 @@ run(){
 export -f run
 
 
-export workload_list=$NEMU_HOME/scripts/simpoint/workload_list.txt
+export workload_list=$NEMU_HOME/scripts/simpoint/test_workload_list.txt
 export checkpoint_list=$NEMU_HOME/scripts/simpoint/test_checkpoint_list.txt
 
 parallel_profiling(){
@@ -112,7 +115,7 @@ export -f parallel_profiling
 
 parallel_cluster(){
     export num_threads=20
-    cat $workload_list | parallel -a - -j $num_threads time cluster {}
+    cat $workload_list | parallel -a - -j $num_threads cluster {}
 }
 export -f parallel_cluster
 
